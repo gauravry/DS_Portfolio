@@ -233,6 +233,17 @@
       border: 1px solid var(--border);
       font-size: 0.95rem;
     }
+    .monty-probability {
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid #bfdbfe;
+      font-size: 0.9rem;
+      color: #1e3a8a;
+    }
+    .monty-probability strong {
+      color: var(--accent-dark);
+    }
     .monty-metrics {
       display: grid;
       gap: 8px;
@@ -450,6 +461,7 @@
             <button class="door" data-door="2">Door 3</button>
           </div>
           <div class="monty-status" id="montyStatus">Pick a door to start the game.</div>
+          <div class="monty-probability" id="montyProbability">Initial odds: any door has a 1/3 chance of the car and 2/3 chance of a goat.</div>
           <div class="monty-controls">
             <button class="primary" id="revealBtn">Reveal a goat</button>
             <button class="primary" id="stayBtn">Stay</button>
@@ -668,6 +680,7 @@
 
     const doorButtons = Array.from(document.querySelectorAll('.door'));
     const montyStatus = document.getElementById('montyStatus');
+    const montyProbability = document.getElementById('montyProbability');
     const revealBtn = document.getElementById('revealBtn');
     const stayBtn = document.getElementById('stayBtn');
     const switchBtn = document.getElementById('switchBtn');
@@ -704,6 +717,7 @@
         button.textContent = `Door ${Number(button.dataset.door) + 1}`;
       });
       montyStatus.textContent = 'Pick a door to start the game.';
+      montyProbability.innerHTML = 'Initial odds: any door has a <strong>1/3</strong> chance of the car and <strong>2/3</strong> chance of a goat.';
     }
 
     function updateDoorStates() {
@@ -734,6 +748,7 @@
       const availableDoors = [0, 1, 2].filter(door => door !== montyState.playerPick && door !== montyState.carDoor);
       montyState.revealedDoor = availableDoors[Math.floor(Math.random() * availableDoors.length)];
       montyStatus.textContent = `Host reveals a goat behind Door ${montyState.revealedDoor + 1}. Stay or switch?`;
+      montyProbability.innerHTML = 'After the reveal: staying keeps a <strong>1/3</strong> chance of the car, switching gives a <strong>2/3</strong> chance.';
       updateDoorStates();
     }
 
@@ -751,6 +766,9 @@
       montyState.roundComplete = true;
       const win = montyState.playerPick === montyState.carDoor;
       montyStatus.textContent = win ? 'You win the car! 🚗' : 'Goat! Better luck next time.';
+      montyProbability.innerHTML = win
+        ? 'Result: your choice had the higher probability for the selected strategy.'
+        : 'Result: the other strategy would have had the higher probability.';
       updateDoorStates();
     }
 
@@ -759,6 +777,7 @@
         if (montyState.roundComplete) return;
         montyState.playerPick = Number(button.dataset.door);
         montyStatus.textContent = `You picked Door ${montyState.playerPick + 1}. Click “Reveal a goat”.`;
+        montyProbability.innerHTML = 'Your door has <strong>1/3</strong> chance of the car, <strong>2/3</strong> chance of a goat.';
         updateDoorStates();
       });
     });
