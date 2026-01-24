@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Normal Distribution Tutorial</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --ink: #1f2a44;
+      --accent: #2563eb;
+      --accent-dark: #1e40af;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --highlight: #fef3c7;
+      --success: #16a34a;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    header.hero {
+      background: linear-gradient(120deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 52px 24px;
+      text-align: center;
+    }
+    header.hero h1 {
+      margin: 0 0 12px;
+      font-size: 2.5rem;
+    }
+    header.hero p {
+      max-width: 960px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+    main {
+      max-width: 1200px;
+      margin: 32px auto 80px;
+      padding: 0 24px;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+      color: var(--accent-dark);
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.8rem;
+      margin-right: 8px;
+    }
+    .chart-block {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .chart-panel {
+      background: var(--card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    canvas {
+      width: 100%;
+      height: 280px;
+      border-radius: 12px;
+      background: #f9fbff;
+      border: 1px solid #eef2ff;
+    }
+    .controls {
+      display: grid;
+      gap: 12px;
+    }
+    .control {
+      display: grid;
+      grid-template-columns: 120px 1fr 70px;
+      gap: 8px;
+      align-items: center;
+    }
+    .control label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .control input[type="range"] {
+      width: 100%;
+    }
+    .meta {
+      display: grid;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+    .stat {
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 8px;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .formula {
+      font-family: "Courier New", monospace;
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .example,
+    .solution {
+      background: #f1f5f9;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-top: 12px;
+      font-size: 0.95rem;
+    }
+    .solution {
+      background: #ecfdf3;
+      border: 1px solid #bbf7d0;
+    }
+    details {
+      background: var(--highlight);
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .problem-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .problem-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .problem-visuals {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .visual-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .tag {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .monty-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .monty-controls {
+      display: grid;
+      gap: 12px;
+    }
+    .door-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(80px, 1fr));
+      gap: 12px;
+    }
+    .door {
+      background: #f8fafc;
+      border: 2px solid #cbd5f5;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 80px;
+      display: grid;
+      place-items: center;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .door.selected {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+    .door.revealed {
+      border-color: #f87171;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .door.winner {
+      border-color: #22c55e;
+      background: #dcfce7;
+      color: #166534;
+    }
+    .monty-status {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .monty-probability {
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid #bfdbfe;
+      font-size: 0.9rem;
+      color: #1e3a8a;
+    }
+    .monty-probability strong {
+      color: var(--accent-dark);
+    }
+    .monty-metrics {
+      display: grid;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+    .monty-metrics strong {
+      color: var(--accent-dark);
+    }
+    button.primary {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease;
+    }
+    button.primary:hover {
+      transform: translateY(-1px);
+      background: var(--accent-dark);
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 24px;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 900px) {
+      .chart-block {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Normal Distribution: Basic → Intermediate → Advanced</h1>
+    <p>Interactive tutorial for a YouTube statistics course. Explore how the normal curve behaves, then solve increasingly advanced problems with visual explanations.</p>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>1) Basic Intuition</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3><span class="pill">Continuous</span>What is Normal?</h3>
+          <p>The normal distribution describes measurements that cluster around a mean (μ) with spread controlled by the standard deviation (σ).</p>
+          <p class="formula">f(x)= (1 / (σ√(2π))) · e^{-(x-μ)²/(2σ²)}</p>
+        </div>
+        <div class="card">
+          <h3>Key features</h3>
+          <ul>
+            <li>Higher σ → wider curve (more uncertainty).</li>
+            <li>Mean shifts the curve left/right.</li>
+            <li>68–95–99.7 rule for standard deviations.</li>
+            <li>Symmetric around μ, bell-shaped, and unimodal.</li>
+            <li>Total area under the curve equals 1.</li>
+            <li>Mean = median = mode.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Real-life examples</h3>
+          <ul>
+            <li>Heights and weights in large populations.</li>
+            <li>Measurement errors from instruments.</li>
+            <li>Standardized test scores and IQ.</li>
+            <li>Daily temperature fluctuations around seasonal averages.</li>
+            <li>Manufacturing tolerances (e.g., bolt diameter).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="interactive">
+      <h2>2) Interactive Normal Curve</h2>
+      <div class="chart-block">
+        <div class="chart-panel">
+          <canvas id="normalCanvas" width="600" height="280" aria-label="Normal distribution chart"></canvas>
+          <div class="formula">f(x)= (1 / (σ√(2π))) · e^{-(x-μ)²/(2σ²)}</div>
+          <div class="meta">
+            <span class="stat" id="normalMeanStat">Mean: 0</span>
+            <span class="stat" id="normalVarStat">Variance: 1</span>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="control">
+            <label for="normalMu">Mean (μ)</label>
+            <input id="normalMu" type="range" min="-3" max="3" step="0.1" value="0" />
+            <span id="normalMuVal">0</span>
+          </div>
+          <div class="control">
+            <label for="normalSigma">Std Dev (σ)</label>
+            <input id="normalSigma" type="range" min="0.5" max="3" step="0.1" value="1" />
+            <span id="normalSigmaVal">1</span>
+          </div>
+          <button class="primary" data-animate="normal">Animate Sampling</button>
+          <div class="example">Real-world example: Heights of adult women are often modeled as Normal(162, 7). What proportion exceed 170 cm?</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>3) Guided Problems (Basic → Intermediate → Advanced)</h2>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div><span class="tag">Basic</span></div>
+          <h3>Problem 1: Z-score basics</h3>
+          <p><strong>Problem:</strong> Test scores are Normal(70, 10). What is the probability a student scores above 85?</p>
+          <ol>
+            <li>Identify μ = 70 and σ = 10.</li>
+            <li>Compute z = (85 − 70) / 10.</li>
+            <li>Find the right-tail probability P(Z &gt; 1.5).</li>
+          </ol>
+          <div class="problem-visuals">
+            <div>
+              <div class="visual-label">Problem visualization: raw distribution</div>
+              <canvas id="problem1Canvas" width="520" height="200"></canvas>
+            </div>
+            <div>
+              <div class="visual-label">Solution visualization: shaded tail</div>
+              <canvas id="solution1Canvas" width="520" height="200"></canvas>
+            </div>
+          </div>
+          <details>
+            <summary>Show solution</summary>
+            <div class="solution">
+              <p>Compute z = (85 − 70) / 10 = 1.5. Then P(X &gt; 85) = P(Z &gt; 1.5) ≈ 0.0668.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="problem-card">
+          <div><span class="tag">Intermediate</span></div>
+          <h3>Problem 2: Central 95% interval</h3>
+          <p><strong>Problem:</strong> Reaction times are Normal(300 ms, 40 ms). Find the middle 95% range.</p>
+          <ol>
+            <li>Identify μ = 300 and σ = 40.</li>
+            <li>Use z = 1.96 for the middle 95%.</li>
+            <li>Compute μ ± 1.96σ to get the interval.</li>
+          </ol>
+          <div class="problem-visuals">
+            <div>
+              <div class="visual-label">Problem visualization: baseline curve</div>
+              <canvas id="problem2Canvas" width="520" height="200"></canvas>
+            </div>
+            <div>
+              <div class="visual-label">Solution visualization: central 95%</div>
+              <canvas id="solution2Canvas" width="520" height="200"></canvas>
+            </div>
+          </div>
+          <details>
+            <summary>Show solution</summary>
+            <div class="solution">
+              <p>The middle 95% is μ ± 1.96σ. So 300 ± 1.96×40 = 300 ± 78.4 → [221.6, 378.4] ms.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="problem-card">
+          <div><span class="tag">Advanced</span></div>
+          <h3>Problem 3: Hypothesis test on a mean</h3>
+          <p><strong>Problem:</strong> A machine claims μ = 50. A sample of n=36 has mean 48.8. Assume σ = 3. Should we reject at α = 0.05?</p>
+          <ol>
+            <li>State H₀: μ = 50 and H₁: μ ≠ 50.</li>
+            <li>Compute z = (48.8 − 50) / (3/√36).</li>
+            <li>Compare |z| to 1.96 or compute the p-value.</li>
+            <li>Reject H₀ if |z| &gt; 1.96.</li>
+          </ol>
+          <div class="problem-visuals">
+            <div>
+              <div class="visual-label">Problem visualization: null distribution</div>
+              <canvas id="problem3Canvas" width="520" height="200"></canvas>
+            </div>
+            <div>
+              <div class="visual-label">Solution visualization: critical regions</div>
+              <canvas id="solution3Canvas" width="520" height="200"></canvas>
+            </div>
+          </div>
+          <details>
+            <summary>Show solution</summary>
+            <div class="solution">
+              <p>Test statistic: z = (48.8 − 50) / (3/√36) = -2.4. Since |z| &gt; 1.96, reject H₀ at 5%.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="monty-hall">
+      <h2>4) Monty Hall Simulation (Probability in Action)</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Why it matters</h3>
+          <p>Monty Hall demonstrates conditional probability and why switching choices can improve your odds.</p>
+          <p class="formula">P(win by switching) = 2/3, P(win by staying) = 1/3</p>
+          <p class="example">Key idea: the host reveals a goat knowing where the car is, so the remaining unopened door carries the combined probability.</p>
+        </div>
+        <div class="card">
+          <h3>Mathematical view</h3>
+          <ul>
+            <li>Initial pick is correct with probability 1/3.</li>
+            <li>Initial pick is wrong with probability 2/3.</li>
+            <li>Switching wins whenever the initial pick is wrong → 2/3.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="monty-layout">
+        <div class="card">
+          <h3>Interactive round (step-by-step)</h3>
+          <div class="door-row" id="doorRow" aria-label="Monty Hall doors">
+            <button class="door" data-door="0">Door 1</button>
+            <button class="door" data-door="1">Door 2</button>
+            <button class="door" data-door="2">Door 3</button>
+          </div>
+          <div class="monty-status" id="montyStatus">Pick a door to start the game.</div>
+          <div class="monty-probability" id="montyProbability">Initial odds: any door has a 1/3 chance of the car and 2/3 chance of a goat.</div>
+          <div class="monty-controls">
+            <button class="primary" id="revealBtn">Reveal a goat</button>
+            <button class="primary" id="stayBtn">Stay</button>
+            <button class="primary" id="switchBtn">Switch</button>
+            <button class="primary" id="resetBtn">Reset Round</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Simulation results (many trials)</h3>
+          <div class="monty-controls">
+            <label for="trialCount">Trials per batch</label>
+            <input id="trialCount" type="range" min="50" max="2000" step="50" value="500" />
+            <span id="trialCountVal">500</span>
+            <div class="monty-controls">
+              <button class="primary" id="runStay">Run Stay Strategy</button>
+              <button class="primary" id="runSwitch">Run Switch Strategy</button>
+              <button class="primary" id="runBoth">Run Both Strategies</button>
+              <button class="primary" id="clearResults">Clear Results</button>
+            </div>
+          </div>
+          <canvas id="montyChart" width="520" height="240" aria-label="Monty Hall results chart"></canvas>
+          <div class="monty-metrics" id="montyMetrics"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built for YouTube classroom demos — adjust, narrate, and share the screen for an interactive learning session.
+  </footer>
+
+  <script>
+    const colors = {
+      line: '#2563eb',
+      fill: 'rgba(37, 99, 235, 0.2)',
+      shade: 'rgba(37, 99, 235, 0.4)',
+      critical: 'rgba(220, 38, 38, 0.35)'
+    };
+
+    function clearCanvas(ctx) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    }
+
+    function drawAxes(ctx, labelX = 'x', labelY = 'f(x)') {
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(40, 10);
+      ctx.lineTo(40, ctx.canvas.height - 30);
+      ctx.lineTo(ctx.canvas.width - 10, ctx.canvas.height - 30);
+      ctx.stroke();
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '12px Segoe UI';
+      ctx.fillText(labelY, 8, 20);
+      ctx.fillText(labelX, ctx.canvas.width - 30, ctx.canvas.height - 10);
+    }
+
+    function normalPdf(x, mu, sigma) {
+      return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+    }
+
+    function plotLine(ctx, data, fillColor = colors.fill) {
+      const width = ctx.canvas.width - 60;
+      const height = ctx.canvas.height - 50;
+      const maxY = Math.max(...data.map(point => point.y), 1e-6);
+      ctx.beginPath();
+      data.forEach((point, index) => {
+        const x = 40 + point.x * width;
+        const y = 10 + height - (point.y / maxY) * height;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.strokeStyle = colors.line;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.lineTo(40 + width, 10 + height);
+      ctx.lineTo(40, 10 + height);
+      ctx.closePath();
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+    }
+
+    function plotShadedRegion(ctx, data, condition, shadeColor) {
+      const width = ctx.canvas.width - 60;
+      const height = ctx.canvas.height - 50;
+      const maxY = Math.max(...data.map(point => point.y), 1e-6);
+      ctx.beginPath();
+      data.forEach((point, index) => {
+        if (!condition(point)) return;
+        const x = 40 + point.x * width;
+        const y = 10 + height - (point.y / maxY) * height;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      const lastPoint = data.filter(condition).slice(-1)[0];
+      const firstPoint = data.filter(condition)[0];
+      if (!lastPoint || !firstPoint) return;
+      ctx.lineTo(40 + lastPoint.x * width, 10 + height);
+      ctx.lineTo(40 + firstPoint.x * width, 10 + height);
+      ctx.closePath();
+      ctx.fillStyle = shadeColor;
+      ctx.fill();
+    }
+
+    function drawNormalInteractive() {
+      const mu = parseFloat(document.getElementById('normalMu').value);
+      const sigma = parseFloat(document.getElementById('normalSigma').value);
+      document.getElementById('normalMuVal').textContent = mu.toFixed(1);
+      document.getElementById('normalSigmaVal').textContent = sigma.toFixed(1);
+      document.getElementById('normalMeanStat').textContent = `Mean: ${mu.toFixed(2)}`;
+      document.getElementById('normalVarStat').textContent = `Variance: ${(sigma ** 2).toFixed(2)}`;
+
+      const ctx = document.getElementById('normalCanvas').getContext('2d');
+      clearCanvas(ctx);
+      drawAxes(ctx);
+
+      const data = [];
+      for (let i = 0; i <= 140; i += 1) {
+        const x = -4 + (8 * i) / 140;
+        data.push({ x: i / 140, y: normalPdf(x, mu, sigma) });
+      }
+      plotLine(ctx, data);
+    }
+
+    function createNormalData(mu, sigma, minX, maxX, steps = 160) {
+      const data = [];
+      for (let i = 0; i <= steps; i += 1) {
+        const x = minX + ((maxX - minX) * i) / steps;
+        data.push({ x: i / steps, rawX: x, y: normalPdf(x, mu, sigma) });
+      }
+      return data;
+    }
+
+    function drawProblemVisual(canvasId, mu, sigma, minX, maxX) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      clearCanvas(ctx);
+      drawAxes(ctx);
+      const data = createNormalData(mu, sigma, minX, maxX);
+      plotLine(ctx, data);
+    }
+
+    function drawSolutionTail(canvasId, mu, sigma, minX, maxX, threshold) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      clearCanvas(ctx);
+      drawAxes(ctx);
+      const data = createNormalData(mu, sigma, minX, maxX);
+      plotLine(ctx, data);
+      plotShadedRegion(ctx, data, point => point.rawX >= threshold, colors.shade);
+    }
+
+    function drawSolutionCentral(canvasId, mu, sigma, minX, maxX, lower, upper) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      clearCanvas(ctx);
+      drawAxes(ctx);
+      const data = createNormalData(mu, sigma, minX, maxX);
+      plotLine(ctx, data);
+      plotShadedRegion(ctx, data, point => point.rawX >= lower && point.rawX <= upper, colors.shade);
+    }
+
+    function drawSolutionCritical(canvasId, mu, sigma, minX, maxX, lowerCrit, upperCrit) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      clearCanvas(ctx);
+      drawAxes(ctx);
+      const data = createNormalData(mu, sigma, minX, maxX);
+      plotLine(ctx, data);
+      plotShadedRegion(ctx, data, point => point.rawX <= lowerCrit, colors.critical);
+      plotShadedRegion(ctx, data, point => point.rawX >= upperCrit, colors.critical);
+    }
+
+    function animateSampling() {
+      let t = 0;
+      const maxFrames = 60;
+      const interval = setInterval(() => {
+        t += 1;
+        const muSlider = document.getElementById('normalMu');
+        const sigmaSlider = document.getElementById('normalSigma');
+        muSlider.value = (Math.sin(t / 10) * 1.8).toFixed(1);
+        sigmaSlider.value = (1 + 0.5 * Math.sin(t / 7)).toFixed(1);
+        drawNormalInteractive();
+        if (t >= maxFrames) {
+          clearInterval(interval);
+        }
+      }, 80);
+    }
+
+    document.querySelectorAll('input[type="range"]').forEach((input) => {
+      input.addEventListener('input', drawNormalInteractive);
+    });
+
+    document.querySelectorAll('button[data-animate]').forEach((button) => {
+      button.addEventListener('click', animateSampling);
+    });
+
+    drawNormalInteractive();
+
+    drawProblemVisual('problem1Canvas', 70, 10, 40, 100);
+    drawSolutionTail('solution1Canvas', 70, 10, 40, 100, 85);
+
+    drawProblemVisual('problem2Canvas', 300, 40, 180, 420);
+    drawSolutionCentral('solution2Canvas', 300, 40, 180, 420, 221.6, 378.4);
+
+    drawProblemVisual('problem3Canvas', 50, 0.5, 47, 53);
+    const lowerCrit = 50 - 1.96 * (3 / Math.sqrt(36));
+    const upperCrit = 50 + 1.96 * (3 / Math.sqrt(36));
+    drawSolutionCritical('solution3Canvas', 50, 0.5, 47, 53, lowerCrit, upperCrit);
+
+    const doorButtons = Array.from(document.querySelectorAll('.door'));
+    const montyStatus = document.getElementById('montyStatus');
+    const montyProbability = document.getElementById('montyProbability');
+    const revealBtn = document.getElementById('revealBtn');
+    const stayBtn = document.getElementById('stayBtn');
+    const switchBtn = document.getElementById('switchBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const trialCount = document.getElementById('trialCount');
+    const trialCountVal = document.getElementById('trialCountVal');
+    const runStay = document.getElementById('runStay');
+    const runSwitch = document.getElementById('runSwitch');
+    const runBoth = document.getElementById('runBoth');
+    const clearResults = document.getElementById('clearResults');
+    const montyChart = document.getElementById('montyChart').getContext('2d');
+    const montyMetrics = document.getElementById('montyMetrics');
+
+    const montyState = {
+      carDoor: null,
+      playerPick: null,
+      revealedDoor: null,
+      roundComplete: false,
+      totals: {
+        stayWins: 0,
+        stayLosses: 0,
+        switchWins: 0,
+        switchLosses: 0
+      }
+    };
+
+    function resetRound() {
+      montyState.carDoor = Math.floor(Math.random() * 3);
+      montyState.playerPick = null;
+      montyState.revealedDoor = null;
+      montyState.roundComplete = false;
+      doorButtons.forEach(button => {
+        button.classList.remove('selected', 'revealed', 'winner');
+        button.textContent = `Door ${Number(button.dataset.door) + 1}`;
+      });
+      montyStatus.textContent = 'Pick a door to start the game.';
+      montyProbability.innerHTML = 'Initial odds: any door has a <strong>1/3</strong> chance of the car and <strong>2/3</strong> chance of a goat.';
+    }
+
+    function updateDoorStates() {
+      doorButtons.forEach(button => {
+        const doorIndex = Number(button.dataset.door);
+        button.classList.toggle('selected', montyState.playerPick === doorIndex);
+        button.classList.toggle('revealed', montyState.revealedDoor === doorIndex);
+        button.classList.toggle('winner', montyState.roundComplete && montyState.carDoor === doorIndex);
+        if (montyState.roundComplete) {
+          button.textContent = doorIndex === montyState.carDoor ? 'Car 🚗' : 'Goat 🐐';
+        } else if (montyState.revealedDoor === doorIndex) {
+          button.textContent = 'Goat 🐐';
+        } else {
+          button.textContent = `Door ${doorIndex + 1}`;
+        }
+      });
+    }
+
+    function revealGoat() {
+      if (montyState.playerPick === null) {
+        montyStatus.textContent = 'Pick a door first.';
+        return;
+      }
+      if (montyState.revealedDoor !== null) {
+        montyStatus.textContent = 'A goat is already revealed.';
+        return;
+      }
+      const availableDoors = [0, 1, 2].filter(door => door !== montyState.playerPick && door !== montyState.carDoor);
+      montyState.revealedDoor = availableDoors[Math.floor(Math.random() * availableDoors.length)];
+      montyStatus.textContent = `Host reveals a goat behind Door ${montyState.revealedDoor + 1}. Stay or switch?`;
+      montyProbability.innerHTML = 'After the reveal: staying keeps a <strong>1/3</strong> chance of the car, switching gives a <strong>2/3</strong> chance.';
+      updateDoorStates();
+    }
+
+    function finishRound(strategy) {
+      if (montyState.playerPick === null || montyState.roundComplete) {
+        return;
+      }
+      if (montyState.revealedDoor === null) {
+        revealGoat();
+      }
+      if (strategy === 'switch') {
+        const remainingDoor = [0, 1, 2].find(door => door !== montyState.playerPick && door !== montyState.revealedDoor);
+        montyState.playerPick = remainingDoor;
+      }
+      montyState.roundComplete = true;
+      const win = montyState.playerPick === montyState.carDoor;
+      montyStatus.textContent = win ? 'You win the car! 🚗' : 'Goat! Better luck next time.';
+      montyProbability.innerHTML = win
+        ? 'Result: your choice had the higher probability for the selected strategy.'
+        : 'Result: the other strategy would have had the higher probability.';
+      updateDoorStates();
+    }
+
+    doorButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (montyState.roundComplete) return;
+        montyState.playerPick = Number(button.dataset.door);
+        montyStatus.textContent = `You picked Door ${montyState.playerPick + 1}. Click “Reveal a goat”.`;
+        montyProbability.innerHTML = 'Your door has <strong>1/3</strong> chance of the car, <strong>2/3</strong> chance of a goat.';
+        updateDoorStates();
+      });
+    });
+
+    revealBtn.addEventListener('click', revealGoat);
+    stayBtn.addEventListener('click', () => finishRound('stay'));
+    switchBtn.addEventListener('click', () => finishRound('switch'));
+    resetBtn.addEventListener('click', resetRound);
+
+    function simulateRound(strategy) {
+      const carDoor = Math.floor(Math.random() * 3);
+      const initialPick = Math.floor(Math.random() * 3);
+      const revealOptions = [0, 1, 2].filter(door => door !== carDoor && door !== initialPick);
+      const revealed = revealOptions[Math.floor(Math.random() * revealOptions.length)];
+      let finalPick = initialPick;
+      if (strategy === 'switch') {
+        finalPick = [0, 1, 2].find(door => door !== initialPick && door !== revealed);
+      }
+      return finalPick === carDoor;
+    }
+
+    function runSimulation(strategy, trials) {
+      let wins = 0;
+      for (let i = 0; i < trials; i += 1) {
+        if (simulateRound(strategy)) wins += 1;
+      }
+      return { wins, losses: trials - wins };
+    }
+
+    function updateChart() {
+      montyChart.clearRect(0, 0, montyChart.canvas.width, montyChart.canvas.height);
+      montyChart.fillStyle = '#ffffff';
+      montyChart.fillRect(0, 0, montyChart.canvas.width, montyChart.canvas.height);
+
+      const data = [
+        { label: 'Stay', wins: montyState.totals.stayWins, losses: montyState.totals.stayLosses },
+        { label: 'Switch', wins: montyState.totals.switchWins, losses: montyState.totals.switchLosses }
+      ];
+      const maxTotal = Math.max(...data.map(item => item.wins + item.losses), 1);
+      const chartHeight = montyChart.canvas.height - 40;
+      const barWidth = 120;
+      data.forEach((item, index) => {
+        const total = item.wins + item.losses;
+        const x = 60 + index * 180;
+        const winHeight = (item.wins / maxTotal) * chartHeight;
+        const lossHeight = (item.losses / maxTotal) * chartHeight;
+        montyChart.fillStyle = '#60a5fa';
+        montyChart.fillRect(x, montyChart.canvas.height - 20 - winHeight, barWidth, winHeight);
+        montyChart.fillStyle = '#f87171';
+        montyChart.fillRect(x, montyChart.canvas.height - 20 - winHeight - lossHeight, barWidth, lossHeight);
+        montyChart.fillStyle = '#1f2937';
+        montyChart.fillText(item.label, x + 30, montyChart.canvas.height - 5);
+        montyChart.fillText(`W:${item.wins}`, x, 16);
+        montyChart.fillText(`L:${item.losses}`, x + 60, 16);
+      });
+    }
+
+    function updateMetrics() {
+      const stayTotal = montyState.totals.stayWins + montyState.totals.stayLosses;
+      const switchTotal = montyState.totals.switchWins + montyState.totals.switchLosses;
+      const stayRate = stayTotal ? (montyState.totals.stayWins / stayTotal * 100).toFixed(1) : '0.0';
+      const switchRate = switchTotal ? (montyState.totals.switchWins / switchTotal * 100).toFixed(1) : '0.0';
+      montyMetrics.innerHTML = `
+        <div><strong>Stay win rate:</strong> ${stayRate}% (${montyState.totals.stayWins}/${stayTotal || 0})</div>
+        <div><strong>Switch win rate:</strong> ${switchRate}% (${montyState.totals.switchWins}/${switchTotal || 0})</div>
+      `;
+    }
+
+    function addResults(strategy, results) {
+      if (strategy === 'stay') {
+        montyState.totals.stayWins += results.wins;
+        montyState.totals.stayLosses += results.losses;
+      } else {
+        montyState.totals.switchWins += results.wins;
+        montyState.totals.switchLosses += results.losses;
+      }
+      updateChart();
+      updateMetrics();
+    }
+
+    trialCount.addEventListener('input', () => {
+      trialCountVal.textContent = trialCount.value;
+    });
+
+    runStay.addEventListener('click', () => {
+      addResults('stay', runSimulation('stay', Number(trialCount.value)));
+    });
+
+    runSwitch.addEventListener('click', () => {
+      addResults('switch', runSimulation('switch', Number(trialCount.value)));
+    });
+
+    runBoth.addEventListener('click', () => {
+      addResults('stay', runSimulation('stay', Number(trialCount.value)));
+      addResults('switch', runSimulation('switch', Number(trialCount.value)));
+    });
+
+    clearResults.addEventListener('click', () => {
+      montyState.totals = { stayWins: 0, stayLosses: 0, switchWins: 0, switchLosses: 0 };
+      updateChart();
+      updateMetrics();
+    });
+
+    resetRound();
+    updateChart();
+    updateMetrics();
+  </script>
+</body>
+</html>
