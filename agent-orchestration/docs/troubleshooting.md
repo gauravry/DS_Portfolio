@@ -1,0 +1,7 @@
+# troubleshooting 
+
+## Purpose
+
+## Details
+
+## References
