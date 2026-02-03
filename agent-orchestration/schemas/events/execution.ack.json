@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "execution.ack",
+  "type": "object",
+  "properties": {
+    "type": { "type": "string" },
+    "version": { "type": "string" },
+    "symbol": { "type": "string" },
+    "ts_close_utc": { "type": "string", "format": "date-time" },
+    "source": { "type": "string" },
+    "sequence_id": { "type": "integer" },
+    "payload": { "type": "object" }
+  },
+  "required": ["type", "version", "symbol", "ts_close_utc", "source", "sequence_id", "payload"]
+}

@@ -1,0 +1,3 @@
+thresholds:
+  vol_z: 2.0
+  expansion_ratio: 1.5
